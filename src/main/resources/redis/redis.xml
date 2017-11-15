@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!-- 引入配置文件 -->
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:redis/connect-redis.properties"/>
+    </bean>
+    <!-- jedis 配置-->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="${redis.maxIdle}"/>
+        <property name="maxWaitMillis" value="${redis.maxWait}"/>
+        <property name="testOnBorrow" value="${redis.testOnBorrow}"/>
+        <property name="maxTotal" value="${redis.maxTotal}"/>
+        <property name="minIdle" value="${redis.minIdle}"/>
+    </bean>
+    <bean id="jedisCluster" class="com.cwtech.redis.JedisClusterFactory">
+        <property name="addressConfig">
+            <value>classpath:redis/connect-redis.properties</value>
+        </property>
+        <property name="addressKeyPrefix" value="cluster"/>   <!--  属性文件里  key的前缀 -->
+        <property name="timeout" value="300000"/>
+        <property name="maxRedirections" value="6"/>
+        <property name="genericObjectPoolConfig" ref="poolConfig"/>
+    </bean>
+</beans>
